@@ -4,13 +4,8 @@
  */
 package eleicao.core;
 
-import eleicao.utils.SecurityUtils;
 import java.io.Serializable;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.PublicKey;
 import java.util.Date;
-import javax.crypto.Cipher;
 
 /**
  *
@@ -25,8 +20,6 @@ public class Eleitor implements Serializable {
     private byte[] password;
     private byte[] imagem;
     private boolean voted;
-    private PublicKey pubKey;
-    private PrivateKey privKey;
     
     /**
      * @param nome
@@ -44,9 +37,6 @@ public class Eleitor implements Serializable {
         this.dataNasc = dataNasc;
         this.sexo = sexo;
         this.imagem = imagem;
-        KeyPair kp = SecurityUtils.generateRSAKeyPair();
-        privKey = kp.getPrivate();
-        pubKey = kp.getPublic();
         voted = false;
     }
 
@@ -61,8 +51,6 @@ public class Eleitor implements Serializable {
         this.sexo = e1.getSexo();
         this.password = e1.getPassword();
         this.imagem = e1.getImagem();
-        this.privKey = e1.getPrivKey();
-        this.pubKey = e1.getPubKey();
         this.voted = e1.isVoted();
     }
 
@@ -191,14 +179,6 @@ public class Eleitor implements Serializable {
         this.imagem = imagem;
     }
 
-        public PublicKey getPubKey() {
-        return pubKey;
-    }
-
-    public PrivateKey getPrivKey() {
-        return privKey;
-    }
-    
     @Override
     public String toString() {
         return CC + " "

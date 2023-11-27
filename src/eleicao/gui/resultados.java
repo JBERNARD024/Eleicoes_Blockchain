@@ -29,8 +29,6 @@ public class resultados extends javax.swing.JDialog {
     String txtArea = "";
     File f;
     ArrayList resultados;
-    int percentagem;
-
     /**
      * Creates new form Resultados
      * @param parent
@@ -54,8 +52,9 @@ public class resultados extends javax.swing.JDialog {
         }
         votosTotais = menu.votos.size();
         for (int i = 0; i <= menu.candidatos.size() - 1; i++) {
+            double percentagem = (double)(menu.resultados.get(i) / menu.votos.size()) * 100;
             txtArea += menu.candidatos.get(i).toString()
-                    + "\t" + menu.resultados.get(i) + " votos \n";
+                    + "\t" + menu.resultados.get(i) + " votos " + percentagem + "%\n";
         }
         jTextArea1.setText(txtArea);
        

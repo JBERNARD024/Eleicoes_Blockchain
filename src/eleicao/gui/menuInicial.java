@@ -33,7 +33,6 @@ public class menuInicial extends javax.swing.JFrame {
     BlockChain blockchain;
     Block block;
     MerkleTreeString tree;
-    Miner mineiro;
 
     /**
      * Creates new form Menu
@@ -46,7 +45,6 @@ public class menuInicial extends javax.swing.JFrame {
         resultados = new ArrayList<>();
         eleicao = new Eleicao(eleitores, candidatos, votos, resultados);
         tree = new MerkleTreeString();
-        mineiro = new Miner();
         blockchain = new BlockChain();
         initComponents();
     }

@@ -11,6 +11,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.security.PrivateKey;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -307,7 +308,8 @@ public class autenticacao extends javax.swing.JDialog {
         // TODO add your handling code here:
         if (evt.getKeyChar() == '\n') {
             try {
-                String passWD = new String(SecurityUtils.decrypt(e.getPassword(), e.getPrivKey()), StandardCharsets.UTF_8);
+                PrivateKey privKey = SecurityUtils.loadPrivateKey("..\\Eleicao_BlockChain_Teste\\eleitores\\" + e.getNome() + "\\key.priv");
+                String passWD = new String(SecurityUtils.decrypt(e.getPassword(), privKey), StandardCharsets.UTF_8);
                 String getpass = new String(txtPass.getPassword()).trim();
                 if(passWD.equals(getpass)){
                     this.dispose();

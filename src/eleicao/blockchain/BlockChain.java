@@ -21,6 +21,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created on 22/08/2022, 10:09:17
@@ -61,9 +62,11 @@ public class BlockChain implements Serializable {
         //hash of previous block
         String prevHash = getLastBlockHash();
         //mining block
-        int nonce = Miner.getNonce(prevHash + data, dificulty);
+        AtomicInteger nonce = new AtomicInteger(0);
+        Miner calculateNonce = new Miner(prevHash + data, dificulty, nonce);
+        int finalNonce = calculateNonce.getNonce();
         //build new block
-        Block newBlock = new Block(prevHash, data, nonce);
+        Block newBlock = new Block(prevHash, data, finalNonce);
         //add new block to the chain
         chain.add(newBlock);
     }

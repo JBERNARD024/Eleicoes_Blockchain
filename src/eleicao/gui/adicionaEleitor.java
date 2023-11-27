@@ -8,11 +8,20 @@ import eleicao.core.Eleitor;
 import eleicao.utils.Recursos;
 import eleicao.utils.SecurityUtils;
 import java.awt.Image;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.KeyPair;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sound.midi.Patch;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -341,11 +350,19 @@ public class adicionaEleitor extends javax.swing.JDialog {
             Logger.getLogger(adicionaEleitor.class.getName()).log(Level.SEVERE, null, ex);
         }
         dataNasc = txtDataNasc.getDate();
+        
+        //Cria uma pasta pessoal para cada utilizador
+        File pasta = new File("..\\Eleicao_BlockChain_Teste\\eleitores\\" + nome);
+        if(!pasta.mkdirs()){
+            pasta.mkdirs();
+        }
         if (verificaCampos() == true && verificaNumCC(numCC) == false) {
+            KeyPair kp = SecurityUtils.generateRSAKeyPair(2048);
+            SecurityUtils.saveKey(kp, "..\\Eleicao_BlockChain_Teste\\eleitores\\" + nome + "\\key");
             Eleitor e = new Eleitor(nome, numCC, dataNasc, sexo, byteIcon);
-            criptPass = SecurityUtils.encrypt(pass.getBytes(), e.getPubKey());
+            criptPass = SecurityUtils.encrypt(pass.getBytes(), kp.getPublic());
             e.setPassword(criptPass);
-            System.out.println(e.getPassword());
+            Recursos.writeObject(e, "..\\Eleicao_BlockChain_Teste\\eleitores\\" + nome + "\\info.eleitor");          
             menu.eleitores.add(e);
             this.dispose();
             new menuEleitor(this, menu, true).setVisible(true);

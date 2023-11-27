@@ -15,37 +15,55 @@
 //////////////////////////////////////////////////////////////////////////////
 package eleicao.blockchain;
 
-/**
- * Created on 28/09/2022, 11:13:39
- *
- * @author IPT - computer
- * @version 1.0
- */
-public class Miner {
-    //maximum number of Nonce
-    public static int MAX_NONCE = (int)1E9;
+import java.util.concurrent.atomic.AtomicInteger;
 
-    public static int getNonce(String data, int dificulty) {
-        //String of zeros
-        String zeros = String.format("%0" + dificulty + "d", 0);
-       //starting nonce
-        int nonce = 0;
-        while (nonce < MAX_NONCE) {
-            //calculate hash of block
-            String hash = Hash.getHash(nonce + data);
-            //DEBUG .... DEBUG .... DEBUG .... DEBUG .... DEBUG .... DEBUG
-            //System.out.println(nonce + " " + hash);
-            //Nounce found
-            if (hash.endsWith(zeros)) {
-                return nonce;
-            }
-            //next nounce
-            nonce++;
-        }
-        return nonce;
+public class Miner extends Thread{
+
+    String data;
+    String zeros;
+    int difficulty;
+    int MAX_NONCE = (int) 1E9;
+    AtomicInteger ticket = new AtomicInteger(0);
+    public AtomicInteger nonce;
+
+    public Miner(String data, int difficulty, AtomicInteger nonce) {
+        this.data = data;
+        this.difficulty = difficulty;
+        this.nonce = nonce;
+        this.zeros = String.format("%0" + difficulty + "d", 0);
     }
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    private static final long serialVersionUID = 202209281113L;
-    //:::::::::::::::::::::::::::  Copyright(c) M@nso  2022  :::::::::::::::::::
-    ///////////////////////////////////////////////////////////////////////////
+
+    public void run() {
+        while (true) {
+            int temp = ticket.getAndIncrement();
+            if (temp >= MAX_NONCE) {
+                return;
+            }
+            String hash = Hash.getHash(temp + data);
+            if (hash.endsWith(zeros)) {
+                nonce.set(temp);
+                ticket.set(MAX_NONCE);
+                return;
+            }
+        }
+    }
+
+    public int getNonce() {
+        int numCores = Runtime.getRuntime().availableProcessors();
+        Miner[] threads = new Miner[numCores];
+
+        for (int i = 0; i < numCores; i++) {
+            threads[i] = new Miner(data, difficulty, nonce);
+            threads[i].start();
+        }
+
+        for (Miner thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return nonce.get();
+    }
 }
