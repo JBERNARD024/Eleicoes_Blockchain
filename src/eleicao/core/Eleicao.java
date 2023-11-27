@@ -28,8 +28,8 @@ public class Eleicao implements Serializable{
     private LocalTime horaFim;
     private String nome;
     private String descricao;
-    private KeyPair kp;
     private byte [] imagem;
+    private byte[] password;
     
     /**
      *
@@ -42,14 +42,13 @@ public class Eleicao implements Serializable{
 
     
     public Eleicao(ArrayList<Eleitor> eleitores, ArrayList<Candidato> candidatos, ArrayList<Voto> votos, ArrayList<Integer> resultados) throws Exception {
-        kp = SecurityUtils.generateRSAKeyPair();
         this.eleitores = eleitores;
         this.candidatos = candidatos;
         this.votos = votos;
         this.resultados = resultados;
     }
 
-    public Eleicao(ArrayList<Eleitor> eleitores, ArrayList<Candidato> candidatos, ArrayList<Voto> votos, ArrayList<Integer> resultados, LocalDate dataInic, LocalDate dataFim, LocalTime horaInic, LocalTime horaFim, String nome, String descricao, byte[] imagem)  {
+    public Eleicao(ArrayList<Eleitor> eleitores, ArrayList<Candidato> candidatos, ArrayList<Voto> votos, ArrayList<Integer> resultados, LocalDate dataInic, LocalDate dataFim, LocalTime horaInic, LocalTime horaFim, String nome, String descricao, byte[] imagem, byte[] password)  {
         this.eleitores = eleitores;
         this.candidatos = candidatos;
         this.votos = votos;
@@ -61,6 +60,7 @@ public class Eleicao implements Serializable{
         this.nome = nome;
         this.descricao = descricao;
         this.imagem = imagem;
+        this.password = password;
     }
     
     /**
@@ -182,4 +182,14 @@ public class Eleicao implements Serializable{
     public void setHoraFim(LocalTime horaFim) {
         this.horaFim = horaFim;
     }
+
+    public byte[] getPassword() {
+        return password;
+    }
+
+    public void setPassword(byte[] password) {
+        this.password = password;
+    }
+    
+    
 }

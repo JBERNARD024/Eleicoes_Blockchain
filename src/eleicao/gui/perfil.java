@@ -5,7 +5,9 @@
 package eleicao.gui;
 
 import eleicao.core.Eleitor;
+import java.time.LocalDateTime;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -19,6 +21,7 @@ public class perfil extends javax.swing.JDialog {
 
     /**
      * Creates new form perfil
+     *
      * @param parent
      * @param menu
      * @param e
@@ -87,12 +90,24 @@ public class perfil extends javax.swing.JDialog {
 
     private void btnVotoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVotoActionPerformed
         // TODO add your handling code here:
-        if (e.isVoted()) {
-            //Mostrar em que em votou
-        } else {
+        if (!e.isVoted() && horario()) {
             new menuVotar(this, menu, e, indiceElect, true).setVisible(true);
+        } else {
+            //Mostrar em que em votou
+            if (e.isVoted()) {
+                JOptionPane.showConfirmDialog(null, "Já exerceu o seu direito de voto", "Utilizador já votou", 2);
+            } else {
+                JOptionPane.showConfirmDialog(null, "Não pode votar fora do período da eleição ", "Horário de voto inválido", 2);
+            }
         }
     }//GEN-LAST:event_btnVotoActionPerformed
+
+    public boolean horario() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime ini = LocalDateTime.of(menu.eleicao.getDataInic(), menu.eleicao.getHoraInic());
+        LocalDateTime fin = LocalDateTime.of(menu.eleicao.getDataFim(), menu.eleicao.getHoraFim());
+        return now.isAfter(ini) && now.isBefore(fin);
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

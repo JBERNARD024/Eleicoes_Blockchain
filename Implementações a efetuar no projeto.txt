@@ -1,0 +1,18 @@
+Implementações a efetuar no projeto:
+
+Blockchain para candidatos, eleitores e votos -->
+	Votos: Criar MerkleTreeString e guardar os ficheiros
+	Candidatos:?
+	Eleitores:?
+Autenticação com palavra passe encriptada --> Feito
+Paralelizacao do mineiro --> Feito
+Encriptação do voto (Assinatura) -->
+	Eleitor encripta o valor
+Encriptação do caderno eleitoral --> 
+Interface não bloqueante -->
+Autenticação Eleição -->
+Guardar as chaves de um candidato -->
+Guardar as chaves de um eleitor --> Feito
+Verificação se um eleitor já votou --> Feito
+Periodo de eleição --> Feito
+Formar um bloco com 8 votos --> Feito

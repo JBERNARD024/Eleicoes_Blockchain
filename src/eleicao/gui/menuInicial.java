@@ -4,17 +4,12 @@
  */
 package eleicao.gui;
 
-import eleicao.blockchain.Block;
 import eleicao.blockchain.BlockChain;
-import eleicao.blockchain.MerkleTreeString;
-import eleicao.blockchain.Miner;
 import eleicao.core.Candidato;
 import eleicao.core.Eleicao;
 import eleicao.core.Eleitor;
 import eleicao.core.Voto;
-import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,11 +26,9 @@ public class menuInicial extends javax.swing.JFrame {
     Eleicao eleicao;
     ArrayList<Integer> resultados;
     BlockChain blockchain;
-    Block block;
-    MerkleTreeString tree;
-
     /**
      * Creates new form Menu
+     * @throws java.lang.Exception
      */
     public menuInicial() throws Exception {
         eleitores = new ArrayList<>();
@@ -44,7 +37,6 @@ public class menuInicial extends javax.swing.JFrame {
         votantes = new ArrayList<>();
         resultados = new ArrayList<>();
         eleicao = new Eleicao(eleitores, candidatos, votos, resultados);
-        tree = new MerkleTreeString();
         blockchain = new BlockChain();
         initComponents();
     }

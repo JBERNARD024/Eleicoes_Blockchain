@@ -4,13 +4,13 @@
  */
 package eleicao.gui;
 
-import com.github.lgooddatepicker.components.DatePicker;
-import com.github.lgooddatepicker.components.DateTimePicker;
 import eleicao.core.Eleicao;
 import eleicao.utils.Recursos;
+import eleicao.utils.SecurityUtils;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyPair;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Date;
@@ -26,22 +26,26 @@ import javax.swing.JOptionPane;
  * @author joaob
  */
 public class adicionaEleicao extends javax.swing.JDialog {
+
     Date now = new Date();
     String nome;
     LocalDate dataInic;
     LocalDate dataFim;
     LocalTime horaInic;
     LocalTime horaFim;
+    String pass;
+    String confPass;
     String descricao;
     menuInicial menu;
     ImageIcon icon;
     byte[] byteIcon;
+    byte[] password;
     File f;
 
     /**
      * Creates new form menuInfos
      */
-    public adicionaEleicao(JDialog parent,File f, menuInicial menu, boolean model) {
+    public adicionaEleicao(JDialog parent, File f, menuInicial menu, boolean model) {
         super(parent, model);
         this.f = f;
         this.menu = menu;
@@ -64,18 +68,23 @@ public class adicionaEleicao extends javax.swing.JDialog {
         labelDataFim = new javax.swing.JLabel();
         dataPickerInic = new com.github.lgooddatepicker.components.DateTimePicker();
         dataPickerFim = new com.github.lgooddatepicker.components.DateTimePicker();
-        jLabel2 = new javax.swing.JLabel();
+        lblPassword = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtDescricao = new javax.swing.JTextArea();
         btnFoto = new javax.swing.JButton();
         btnSair = new javax.swing.JButton();
         btnAdiciona = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        txtConfPassword = new javax.swing.JPasswordField();
+        lblPassword1 = new javax.swing.JLabel();
+        txtPassword = new javax.swing.JPasswordField();
 
         jLabel1.setText("jLabel1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Informações");
         setMinimumSize(new java.awt.Dimension(625, 250));
+        setPreferredSize(new java.awt.Dimension(625, 380));
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -103,14 +112,14 @@ public class adicionaEleicao extends javax.swing.JDialog {
         getContentPane().add(dataPickerInic, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 60, 320, 30));
         getContentPane().add(dataPickerFim, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 110, 320, 30));
 
-        jLabel2.setText("Descrição:");
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 60, 50));
+        lblPassword.setText("Confirmar Password:");
+        getContentPane().add(lblPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 210, 110, 50));
 
         txtDescricao.setColumns(20);
         txtDescricao.setRows(5);
         jScrollPane1.setViewportView(txtDescricao);
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 150, 320, 50));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 270, 320, 50));
 
         btnFoto.setText("Foto");
         btnFoto.setMinimumSize(new java.awt.Dimension(125, 125));
@@ -128,7 +137,7 @@ public class adicionaEleicao extends javax.swing.JDialog {
                 btnSairActionPerformed(evt);
             }
         });
-        getContentPane().add(btnSair, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 180, -1, 30));
+        getContentPane().add(btnSair, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 290, -1, 30));
 
         btnAdiciona.setText("Adicionar");
         btnAdiciona.addActionListener(new java.awt.event.ActionListener() {
@@ -136,7 +145,15 @@ public class adicionaEleicao extends javax.swing.JDialog {
                 btnAdicionaActionPerformed(evt);
             }
         });
-        getContentPane().add(btnAdiciona, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 180, -1, 30));
+        getContentPane().add(btnAdiciona, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 290, -1, 30));
+
+        jLabel3.setText("Descrição:");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 270, 60, 50));
+        getContentPane().add(txtConfPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 220, 100, 30));
+
+        lblPassword1.setText("Password: ");
+        getContentPane().add(lblPassword1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 150, 60, 50));
+        getContentPane().add(txtPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 160, 100, 30));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -165,8 +182,12 @@ public class adicionaEleicao extends javax.swing.JDialog {
     }//GEN-LAST:event_btnSairActionPerformed
 
     private void btnAdicionaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionaActionPerformed
-        // TODO add your handling code here:
-        adicionarEleicao();
+        try {
+            // TODO add your handling code here:
+            adicionarEleicao();
+        } catch (Exception ex) {
+            Logger.getLogger(adicionaEleicao.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnAdicionaActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -176,16 +197,20 @@ public class adicionaEleicao extends javax.swing.JDialog {
     private com.github.lgooddatepicker.components.DateTimePicker dataPickerFim;
     private com.github.lgooddatepicker.components.DateTimePicker dataPickerInic;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelDataFim;
     private javax.swing.JLabel labelDataInic;
     private javax.swing.JLabel labelNome;
+    private javax.swing.JLabel lblPassword;
+    private javax.swing.JLabel lblPassword1;
+    private javax.swing.JPasswordField txtConfPassword;
     private javax.swing.JTextArea txtDescricao;
     private javax.swing.JTextField txtNome;
+    private javax.swing.JPasswordField txtPassword;
     // End of variables declaration//GEN-END:variables
 
-    private boolean verificaCampo(){
+    private boolean verificaCampo() {
         if (nome.equals("") || dataInic == null || dataFim == null) {
             JOptionPane.showConfirmDialog(null, "Um ou mais campos obrigatórios estão vazios", "Campos Vazios", 2);
             return false;
@@ -193,13 +218,15 @@ public class adicionaEleicao extends javax.swing.JDialog {
             return true;
         }
     }
-    
-    private void adicionarEleicao() {
+
+    private void adicionarEleicao() throws Exception {
         nome = txtNome.getText().trim();
         dataInic = dataPickerInic.getDatePicker().getDate();
         dataFim = dataPickerFim.getDatePicker().getDate();
         horaInic = dataPickerInic.getTimePicker().getTime();
         horaFim = dataPickerFim.getTimePicker().getTime();
+        pass = new String(txtPassword.getPassword()).trim();
+        confPass = new String(txtConfPassword.getPassword()).trim();
         descricao = txtDescricao.getText();
         if (icon == null) {
             try {
@@ -216,10 +243,18 @@ public class adicionaEleicao extends javax.swing.JDialog {
         } catch (IOException ex) {
             Logger.getLogger(adicionaEleicao.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if(verificaCampo() == true){
-            menu.eleicao = new Eleicao(menu.eleitores, menu.candidatos, menu.votos, menu.resultados, dataInic, dataFim, horaInic, horaFim, nome, descricao, byteIcon);
+        if (verificaCampo() == true) {
+            File pasta = new File("..\\Eleicao_BlockChain_Teste\\eleicao\\" + nome);
+            if (!pasta.mkdirs()) {
+                pasta.mkdirs();
+            }
+            KeyPair kp = SecurityUtils.generateRSAKeyPair(2048);
+            SecurityUtils.saveKey(kp, "..\\Eleicao_BlockChain_Teste\\eleicao\\" + nome + "\\key");
+            password = SecurityUtils.encrypt(pass.getBytes(), kp.getPublic());
+            menu.eleicao = new Eleicao(menu.eleitores, menu.candidatos, menu.votos, menu.resultados, dataInic, dataFim, horaInic, horaFim, nome, descricao, byteIcon, password);
+            Recursos.writeObject(menu.eleicao, "..\\Eleicao_BlockChain_Teste\\eleicao\\" + nome + "\\info.eleicao");
             this.dispose();
-            new menuInfos(this, menu, true).setVisible(true);       
+            new menuInfos(this, menu, true).setVisible(true);
         }
     }
 }

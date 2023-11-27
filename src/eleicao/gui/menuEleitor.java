@@ -10,6 +10,8 @@ import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -447,6 +449,7 @@ public class menuEleitor extends javax.swing.JDialog {
                 listEleitores.setSelectedIndex(index);
                 lblRegisto.setText("Registo " + 1 + "/" + tamanho);
                 panelEleitor.setVisible(dList.size() > 0);
+                btnEditarEleitor.setEnabled(dList.size() > 0);
                 btnEliminaEleitor.setEnabled(dList.size() > 0);
                 panelBtns.setVisible(dList.size() > 0);
                 btnPrimeiro.setEnabled(index > 1);
@@ -480,7 +483,11 @@ public class menuEleitor extends javax.swing.JDialog {
         index = listEleitores.getSelectedIndex();
         Eleitor e = menu.eleitores.get(index);
         this.dispose();
-        new editaEleitor(this, e, index,f, menu, true).setVisible(true);
+        try {
+            new editaEleitor(this, e, index,f, menu, true).setVisible(true);
+        } catch (Exception ex) {
+            Logger.getLogger(menuEleitor.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnEditarEleitorActionPerformed
 
     private void btnPrimeiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPrimeiroActionPerformed

@@ -11,6 +11,9 @@ import java.awt.Color;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,24 +36,25 @@ public class editaEleitor extends javax.swing.JDialog {
     char sexo;
     String nome;
     Date dataNasc;
-    Cipher pass;
-    Cipher confPass;
+    String pass;
+    String confPass;
     ImageIcon icon;
     byte[] byteIcon;
     Eleitor e;
     int index;
     File f;
+    byte[] cryptPass;
 
     /**
-     * 
+     *
      * @param parent
      * @param e
      * @param index
      * @param f
      * @param menu
-     * @param model 
+     * @param model
      */
-    public editaEleitor(JDialog parent, Eleitor e, int index, File f, menuInicial menu, boolean model) {
+    public editaEleitor(JDialog parent, Eleitor e, int index, File f, menuInicial menu, boolean model) throws IOException, Exception {
         super(parent, model);
         this.menu = menu;
         this.e = e;
@@ -65,8 +69,11 @@ public class editaEleitor extends javax.swing.JDialog {
             boxSex.setSelectedIndex(1);
         }
         txtDataNasc.setDate(e.getDataNasc());
-        txtPass.setText(e.getPassword().toString());
-        txtConfPass.setText(e.getPassword().toString());
+        PrivateKey privKey = SecurityUtils.loadPrivateKey("..\\Eleicao_BlockChain_Teste\\eleitores\\" + e.getNome() + "\\key.priv");
+        pass = new String(SecurityUtils.decrypt(e.getPassword(), privKey), StandardCharsets.UTF_8);
+        confPass = new String(SecurityUtils.decrypt(e.getPassword(), privKey), StandardCharsets.UTF_8);
+        txtPass.setText(pass);
+        txtConfPass.setText(confPass);
         icon = new ImageIcon(e.getImagem());
         Image imagem = icon.getImage().getScaledInstance(btnFoto.getWidth(), btnFoto.getHeight(), Image.SCALE_SMOOTH);
         btnFoto.setBackground(Color.white);
@@ -344,11 +351,10 @@ public class editaEleitor extends javax.swing.JDialog {
     public void editaEleitor() throws Exception {
         numCC = txtCC.getText().trim();
         nome = txtNome.getText().trim();
-        pass = SecurityUtils.createCipherPBE(5, new String(txtPass.getPassword()).trim());
-        confPass = SecurityUtils.createCipherPBE(5, new String(txtConfPass.getPassword()).trim());
-        System.out.println(pass.toString());
         int indice = boxSex.getSelectedIndex();
         sexo = boxSex.getItemAt(indice).charAt(0);
+        pass = new String(txtPass.getPassword()).trim();
+        confPass = new String(txtConfPass.getPassword()).trim();
         try {
             byteIcon = Recursos.iconToByteArray(icon);
         } catch (IOException ex) {
@@ -360,7 +366,9 @@ public class editaEleitor extends javax.swing.JDialog {
             e.setNome(nome);
             e.setDataNasc(dataNasc);
             e.setImagem(byteIcon);
-            //e.setPassword(pass);
+            PublicKey pubKey = SecurityUtils.loadPublicKey("..\\Eleicao_BlockChain_Teste\\eleitores\\" + e.getNome() + "\\key.pub");
+            cryptPass = SecurityUtils.encrypt(pass.getBytes(), pubKey);
+            e.setPassword(cryptPass);
             e.setSexo(sexo);
             menu.eleitores.set(index, e);
             this.dispose();
